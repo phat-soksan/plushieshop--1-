@@ -36,9 +36,7 @@ public class OrderItem implements Displayable, Calculatable {
         return plushie.getPrice() * quantity;
     }
 
-    public boolean hasEnoughStock() {
-        return plushie != null && plushie.hasEnoughStockForAllItems(quantity);
-    }
+
 
     public boolean reduceStock() {
         return plushie != null && plushie.reduceStock(quantity);
