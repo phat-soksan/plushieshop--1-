@@ -2,7 +2,6 @@ package model;
 import interfaces.Displayable;
 import interfaces.StockManageable;
 
-
 public class Plushie implements Displayable, StockManageable {
 
     private String plushieId;
@@ -27,9 +26,9 @@ public class Plushie implements Displayable, StockManageable {
     }
 
     public String getPlushieId() { return plushieId; }
-    public String getName() { return name; }
-    public double getPrice() { return price; }
-    public int getStock() { return stock; }
+    public String getName()      { return name; }
+    public double getPrice()     { return price; }
+    public int getStock()        { return stock; }
 
     public void setName(String name) {
         if (name != null && !name.trim().isEmpty()) {
@@ -62,6 +61,25 @@ public class Plushie implements Displayable, StockManageable {
     @Override
     public void displayInfo() {
         System.out.println(plushieId + " - " + name + " - $" + price + " - Stock: " + stock);
+    }
+
+    public void displayInfo(boolean showStock) {
+        String info = plushieId + " - " + name + " - $" + price;
+        if (showStock) {
+            info += " - Stock: " + stock;
+        }
+        System.out.println(info);
+    }
+
+    public void displayInfo(boolean showStock, boolean showPrice) {
+        String info = plushieId + " - " + name;
+        if (showPrice) {
+            info += " - $" + price;
+        }
+        if (showStock) {
+            info += " - Stock: " + stock;
+        }
+        System.out.println(info);
     }
 
     public static int getPlushieCount() {

@@ -1,8 +1,6 @@
 package model;
 import java.util.ArrayList;
 
-
-
 public class Customer extends Person {
 
     private ArrayList<Order> orders;

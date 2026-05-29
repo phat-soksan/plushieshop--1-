@@ -1,11 +1,10 @@
 package model;
+
 import interfaces.Calculatable;
 import interfaces.Displayable;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
-
-
 
 public class Order implements Displayable, Calculatable {
 
@@ -34,16 +33,32 @@ public class Order implements Displayable, Calculatable {
         return value.trim();
     }
 
-    public String getOrderId() { return orderId; }
-    public Customer getCustomer() { return customer; }
-    public Staff getStaff() { return staff; }
-    public String getOrderDate() { return orderDate; }
-    public boolean isConfirmed() { return confirmed; }
+    public String getOrderId() {
+        return orderId;
+    }
+
+    public Customer getCustomer() {
+        return customer;
+    }
+
+    public Staff getStaff() {
+        return staff;
+    }
+
+    public String getOrderDate() {
+        return orderDate;
+    }
+
+    public boolean isConfirmed() {
+        return confirmed;
+    }
 
     public ArrayList<OrderItem> getItemsCopy() {
         return new ArrayList<>(items);
     }
 
+
+    // Version 1: add a fully built OrderItem (original method)
     public boolean addItem(OrderItem item) {
         if (confirmed) {
             System.out.println("Cannot add item. Order is already confirmed.");
@@ -55,6 +70,28 @@ public class Order implements Displayable, Calculatable {
         }
         items.add(item);
         return true;
+    }
+
+    // Version 2: add a Plushie directly — quantity defaults to 1
+    public boolean addItem(Plushie plushie) {
+        if (plushie == null) {
+            System.out.println("Cannot add a null plushie.");
+            return false;
+        }
+        return addItem(new OrderItem(plushie, 1));
+    }
+
+    // Version 3: add a Plushie with a specific quantity
+    public boolean addItem(Plushie plushie, int quantity) {
+        if (plushie == null) {
+            System.out.println("Cannot add a null plushie.");
+            return false;
+        }
+        if (quantity <= 0) {
+            System.out.println("Quantity must be greater than 0.");
+            return false;
+        }
+        return addItem(new OrderItem(plushie, quantity));
     }
 
     @Override

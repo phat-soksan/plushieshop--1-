@@ -1,11 +1,10 @@
 package model;
+
 import interfaces.Displayable;
 import interfaces.OrderSearchable;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
-
-
 
 public class ShopSystem implements Displayable, OrderSearchable {
 
@@ -30,19 +29,22 @@ public class ShopSystem implements Displayable, OrderSearchable {
     }
 
     public boolean addPlushie(Plushie plushie) {
-        if (plushie == null) return false;
+        if (plushie == null)
+            return false;
         plushies.add(plushie);
         return true;
     }
 
     public boolean addCustomer(Customer customer) {
-        if (customer == null) return false;
+        if (customer == null)
+            return false;
         customers.add(customer);
         return true;
     }
 
     public boolean addStaff(Staff staff) {
-        if (staff == null) return false;
+        if (staff == null)
+            return false;
         staffMembers.add(staff);
         return true;
     }
@@ -73,40 +75,94 @@ public class ShopSystem implements Displayable, OrderSearchable {
 
     @Override
     public Order findOrderById(String orderId) {
-        if (orderId == null) return null;
+        if (orderId == null)
+            return null;
         return orderMap.get(orderId);
     }
 
+    // Keep original ID-based methods unchanged
     public Plushie searchPlushieById(String plushieId) {
         for (Plushie plushie : plushies) {
-            if (plushie.getPlushieId().equals(plushieId)) return plushie;
+            if (plushie.getPlushieId().equals(plushieId))
+                return plushie;
         }
         return null;
     }
 
     public Customer searchCustomerById(String customerId) {
         for (Customer customer : customers) {
-            if (customer.getCustomerId().equals(customerId)) return customer;
+            if (customer.getCustomerId().equals(customerId))
+                return customer;
         }
         return null;
     }
 
     public Staff searchStaffById(String staffId) {
         for (Staff staff : staffMembers) {
-            if (staff.getStaffId().equals(staffId)) return staff;
+            if (staff.getStaffId().equals(staffId))
+                return staff;
         }
         return null;
     }
 
-    public ArrayList<Plushie> getPlushiesCopy() { return new ArrayList<>(plushies); }
-    public ArrayList<Customer> getCustomersCopy() { return new ArrayList<>(customers); }
-    public ArrayList<Staff> getStaffMembersCopy() { return new ArrayList<>(staffMembers); }
-    public ArrayList<Order> getOrderHistoryCopy() { return new ArrayList<>(orderHistory); }
+    public Plushie searchPlushie(String plushieId) {
+        return searchPlushieById(plushieId);
+    }
 
-    public int getOrderHistorySize() { return orderHistory.size(); }
-    public int getCustomerListSize() { return customers.size(); }
-    public int getStaffListSize() { return staffMembers.size(); }
-    public int getPlushieListSize() { return plushies.size(); }
+    public ArrayList<Plushie> searchPlushie(String name, double maxPrice) {
+        ArrayList<Plushie> results = new ArrayList<>();
+        for (Plushie plushie : plushies) {
+            if (plushie.getName().toLowerCase().contains(name.toLowerCase())
+                    && plushie.getPrice() <= maxPrice) {
+                results.add(plushie);
+            }
+        }
+        return results;
+    }
+
+    public ArrayList<Plushie> searchPlushie(String name, double minPrice, double maxPrice) {
+        ArrayList<Plushie> results = new ArrayList<>();
+        for (Plushie plushie : plushies) {
+            if (plushie.getName().toLowerCase().contains(name.toLowerCase())
+                    && plushie.getPrice() >= minPrice
+                    && plushie.getPrice() <= maxPrice) {
+                results.add(plushie);
+            }
+        }
+        return results;
+    }
+
+    public ArrayList<Plushie> getPlushiesCopy() {
+        return new ArrayList<>(plushies);
+    }
+
+    public ArrayList<Customer> getCustomersCopy() {
+        return new ArrayList<>(customers);
+    }
+
+    public ArrayList<Staff> getStaffMembersCopy() {
+        return new ArrayList<>(staffMembers);
+    }
+
+    public ArrayList<Order> getOrderHistoryCopy() {
+        return new ArrayList<>(orderHistory);
+    }
+
+    public int getOrderHistorySize() {
+        return orderHistory.size();
+    }
+
+    public int getCustomerListSize() {
+        return customers.size();
+    }
+
+    public int getStaffListSize() {
+        return staffMembers.size();
+    }
+
+    public int getPlushieListSize() {
+        return plushies.size();
+    }
 
     public void displayAllPlushies() {
         System.out.println("\nPlushies in " + shopName + ":");

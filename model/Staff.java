@@ -32,7 +32,25 @@ public class Staff extends Person {
             System.out.println(name + " cannot process a null order.");
             return;
         }
-        System.out.println(name + " is processing order " + order.getOrderId());
+        System.out.println(name + " (" + role + ") is processing order " + order.getOrderId());
+    }
+
+    public void processOrder(Order order, String note) {
+        if (order == null) {
+            System.out.println(name + " cannot process a null order.");
+            return;
+        }
+        System.out.println(name + " (" + role + ") is processing order " + order.getOrderId());
+        System.out.println("Note: " + note);
+    }
+
+    // Version 3: process using only an order ID string
+    public void processOrder(String orderId) {
+        if (orderId == null || orderId.trim().isEmpty()) {
+            System.out.println(name + " cannot process: order ID is missing.");
+            return;
+        }
+        System.out.println(name + " (" + role + ") is processing order ID: " + orderId);
     }
 
     @Override
