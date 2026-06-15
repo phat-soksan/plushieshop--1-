@@ -48,9 +48,7 @@ public abstract class Staff extends Person {
 
     @Override
     public void displayInfo() {
-        System.out.println("Staff ID: " + id);
-        System.out.println("Name: " + name);
-        System.out.println("Phone: " + phone);
+        super.displayInfo();  
         System.out.println("Role: " + getRole());
     }
 

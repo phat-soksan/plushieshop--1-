@@ -29,10 +29,8 @@ public class Customer extends Person {
 
     @Override
     public void displayInfo() {
-        System.out.println("Customer ID: " + id);
-        System.out.println("Name: " + name);
-        System.out.println("Phone: " + phone);
-        System.out.println("Total Orders: " + orders.size());
+        super.displayInfo();                                   // prints ID, Name, Phone from Person
+        System.out.println("Total Orders: " + orders.size()); // adds Customer-specific info
     }
 
     public static int getCustomerCount() { return customerCount; }
