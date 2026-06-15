@@ -1,38 +1,26 @@
 package model;
 
-public class Staff extends Person {
+// Week 9: Staff is now an abstract class.
+// Every staff member must provide their own version of work().
+// No one should create a plain "Staff" object — only Cashier or Manager.
+public abstract class Staff extends Person {
 
-    private String role;
     private static int staffCount = 0;
 
-    public Staff(String staffId, String name, String phone, String role) {
+    public Staff(String staffId, String name, String phone) {
         super(staffId, name, phone);
-        setRole(role);
         staffCount++;
     }
 
-    public String getStaffId() {
-        return id;
-    }
+    public String getStaffId() { return id; }
 
-    public String getRole() {
-        return role;
-    }
-
-    public void setRole(String role) {
-        if (role == null || role.trim().isEmpty()) {
-            this.role = "General Staff";
-        } else {
-            this.role = role.trim();
-        }
-    }
-
+    // Normal shared method — all staff process orders the same way
     public void processOrder(Order order) {
         if (order == null) {
             System.out.println(name + " cannot process a null order.");
             return;
         }
-        System.out.println(name + " (" + role + ") is processing order " + order.getOrderId());
+        System.out.println(name + " is processing order " + order.getOrderId());
     }
 
     public void processOrder(Order order, String note) {
@@ -40,28 +28,31 @@ public class Staff extends Person {
             System.out.println(name + " cannot process a null order.");
             return;
         }
-        System.out.println(name + " (" + role + ") is processing order " + order.getOrderId());
+        System.out.println(name + " is processing order " + order.getOrderId());
         System.out.println("Note: " + note);
     }
 
-    // Version 3: process using only an order ID string
     public void processOrder(String orderId) {
         if (orderId == null || orderId.trim().isEmpty()) {
             System.out.println(name + " cannot process: order ID is missing.");
             return;
         }
-        System.out.println(name + " (" + role + ") is processing order ID: " + orderId);
+        System.out.println(name + " is processing order ID: " + orderId);
     }
+
+    // Abstract method — each staff role has its own way of working
+    public abstract void work();
+
+    // Abstract method — each staff role has a different title/role label
+    public abstract String getRole();
 
     @Override
     public void displayInfo() {
         System.out.println("Staff ID: " + id);
         System.out.println("Name: " + name);
         System.out.println("Phone: " + phone);
-        System.out.println("Role: " + role);
+        System.out.println("Role: " + getRole());
     }
 
-    public static int getStaffCount() {
-        return staffCount;
-    }
+    public static int getStaffCount() { return staffCount; }
 }

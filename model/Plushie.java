@@ -1,88 +1,35 @@
 package model;
-import interfaces.Displayable;
-import interfaces.StockManageable;
 
-public class Plushie implements Displayable, StockManageable {
+// Week 9: Plushie now extends the abstract class PlushieItem.
+// It implements showCategory() to identify itself as a Standard Plushie.
+// All overloaded displayInfo() variants are kept for backward compatibility.
+public class Plushie extends PlushieItem {
 
-    private String plushieId;
-    private String name;
-    private double price;
-    private int stock;
     private static int plushieCount = 0;
 
     public Plushie(String plushieId, String name, double price, int stock) {
-        this.plushieId = cleanText(plushieId, "UNKNOWN_PLUSHIE");
-        this.name = cleanText(name, "Unknown Plushie");
-        setPrice(price);
-        setStock(stock);
+        super(plushieId, name, price, stock);
         plushieCount++;
     }
 
-    private String cleanText(String value, String defaultValue) {
-        if (value == null || value.trim().isEmpty()) {
-            return defaultValue;
-        }
-        return value.trim();
-    }
-
-    public String getPlushieId() { return plushieId; }
-    public String getName()      { return name; }
-    public double getPrice()     { return price; }
-    public int getStock()        { return stock; }
-
-    public void setName(String name) {
-        if (name != null && !name.trim().isEmpty()) {
-            this.name = name.trim();
-        }
-    }
-
-    public void setPrice(double price) {
-        this.price = (price >= 0) ? price : 0;
-    }
-
-    public void setStock(int stock) {
-        this.stock = (stock >= 0) ? stock : 0;
-    }
-
     @Override
-    public boolean hasEnoughStockForAllItems(int quantity) {
-        return quantity > 0 && quantity <= stock;
+    public void showCategory() {
+        System.out.println(name + " is a Standard Plushie.");
     }
 
-    @Override
-    public boolean reduceStock(int quantity) {
-        if (hasEnoughStockForAllItems(quantity)) {
-            stock -= quantity;
-            return true;
-        }
-        return false;
-    }
-
-    @Override
-    public void displayInfo() {
-        System.out.println(plushieId + " - " + name + " - $" + price + " - Stock: " + stock);
-    }
-
+    // Overloaded displayInfo variants kept from Week 7
     public void displayInfo(boolean showStock) {
         String info = plushieId + " - " + name + " - $" + price;
-        if (showStock) {
-            info += " - Stock: " + stock;
-        }
+        if (showStock) info += " - Stock: " + stock;
         System.out.println(info);
     }
 
     public void displayInfo(boolean showStock, boolean showPrice) {
         String info = plushieId + " - " + name;
-        if (showPrice) {
-            info += " - $" + price;
-        }
-        if (showStock) {
-            info += " - Stock: " + stock;
-        }
+        if (showPrice) info += " - $" + price;
+        if (showStock) info += " - Stock: " + stock;
         System.out.println(info);
     }
 
-    public static int getPlushieCount() {
-        return plushieCount;
-    }
+    public static int getPlushieCount() { return plushieCount; }
 }
