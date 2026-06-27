@@ -32,13 +32,6 @@ public abstract class Staff extends Person {
         System.out.println("Note: " + note);
     }
 
-    public void processOrder(String orderId) {
-        if (orderId == null || orderId.trim().isEmpty()) {
-            System.out.println(name + " cannot process: order ID is missing.");
-            return;
-        }
-        System.out.println(name + " is processing order ID: " + orderId);
-    }
 
     // Abstract method — each staff role has its own way of working
     public abstract void work();

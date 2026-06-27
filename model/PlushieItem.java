@@ -34,11 +34,13 @@ public abstract class PlushieItem implements Displayable, StockManageable {
     }
 
     public void setPrice(double price) {
-        this.price = (price >= 0) ? price : 0;
+        if (price < 0) throw new IllegalArgumentException("Price cannot be negative: " + price);
+        this.price = price;
     }
 
     public void setStock(int stock) {
-        this.stock = (stock >= 0) ? stock : 0;
+        if (stock < 0) throw new IllegalArgumentException("Stock cannot be negative: " + stock);
+        this.stock = stock;
     }
 
     @Override

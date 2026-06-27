@@ -3,8 +3,6 @@ package model;
 import interfaces.Calculatable;
 import interfaces.Displayable;
 import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.Map;
 
 public class Order implements Displayable, Calculatable {
 
@@ -17,12 +15,12 @@ public class Order implements Displayable, Calculatable {
     private static int orderCount = 0;
 
     public Order(String orderId, Customer customer, Staff staff, String orderDate) {
-        this.orderId    = cleanText(orderId,    "UNKNOWN_ORDER");
-        this.customer   = customer;
-        this.staff      = staff;
-        this.orderDate  = cleanText(orderDate,  "No Date");
-        this.items      = new ArrayList<>();
-        this.confirmed  = false;
+        this.orderId   = cleanText(orderId,   "UNKNOWN_ORDER");
+        this.customer  = customer;
+        this.staff     = staff;
+        this.orderDate = cleanText(orderDate, "No Date");
+        this.items     = new ArrayList<>();
+        this.confirmed = false;
         orderCount++;
     }
 
@@ -31,58 +29,47 @@ public class Order implements Displayable, Calculatable {
         return value.trim();
     }
 
-    public String getOrderId()  { return orderId; }
+    public String getOrderId()   { return orderId; }
     public Customer getCustomer(){ return customer; }
-    public Staff getStaff()     { return staff; }
-    public String getOrderDate(){ return orderDate; }
-    public boolean isConfirmed(){ return confirmed; }
-    public ArrayList<OrderItem> getItemsCopy() { return new ArrayList<>(items); }
+    public Staff getStaff()      { return staff; }
+    public String getOrderDate() { return orderDate; }
+    public boolean isConfirmed() { return confirmed; }
 
+    // Core addItem — does the actual work
     public boolean addItem(OrderItem item) {
-        if (confirmed) { System.out.println("Cannot add item. Order is already confirmed."); return false; }
-        if (item == null || item.getPlushie() == null) { System.out.println("Cannot add invalid order item."); return false; }
+        if (confirmed) throw new IllegalStateException("Cannot add item — order " + orderId + " is already confirmed.");
+        if (item == null || item.getPlushie() == null) throw new IllegalArgumentException("Cannot add invalid order item.");
         items.add(item);
         return true;
     }
 
-    public boolean addItem(Plushie plushie) {
-        if (plushie == null) { System.out.println("Cannot add a null plushie."); return false; }
-        return addItem(new OrderItem(plushie, 1));
-    }
-
+    // Convenience overload — caller specifies plushie and quantity
     public boolean addItem(Plushie plushie, int quantity) {
-        if (plushie == null) { System.out.println("Cannot add a null plushie."); return false; }
-        if (quantity <= 0)   { System.out.println("Quantity must be greater than 0."); return false; }
+        if (plushie == null) throw new IllegalArgumentException("Cannot add a null plushie.");
+        if (quantity <= 0)   throw new IllegalArgumentException("Quantity must be greater than 0.");
         return addItem(new OrderItem(plushie, quantity));
     }
 
+    // Lambda: stream replaces manual accumulator loop
     @Override
     public double calculate() {
-        double total = 0;
-        for (OrderItem item : items) total += item.calculate();
-        return total;
+        return items.stream()
+                .mapToDouble(OrderItem::calculate)
+                .sum();
     }
 
+    // Lambda: stream replaces manual loop with allMatch check
     private boolean hasEnoughStockForAllItems() {
-        Map<Plushie, Integer> required = new HashMap<>();
-        for (OrderItem item : items) {
-            Plushie p = item.getPlushie();
-            required.put(p, required.getOrDefault(p, 0) + item.getQuantity());
-        }
-        for (Map.Entry<Plushie, Integer> entry : required.entrySet()) {
-            if (!entry.getKey().hasEnoughStockForAllItems(entry.getValue())) {
-                System.out.println("Not enough stock for " + entry.getKey().getName());
-                return false;
-            }
-        }
-        return true;
+        return items.stream().allMatch(item ->
+            item.getPlushie().hasEnoughStockForAllItems(item.getQuantity())
+        );
     }
 
     public boolean confirm() {
-        if (confirmed)         { System.out.println("Order " + orderId + " is already confirmed."); return false; }
-        if (customer == null)  { System.out.println("Order cannot be confirmed without a customer."); return false; }
-        if (staff == null)     { System.out.println("Order cannot be confirmed without staff."); return false; }
-        if (items.isEmpty())   { System.out.println("Order cannot be confirmed without items."); return false; }
+        if (confirmed)        throw new IllegalStateException("Order " + orderId + " is already confirmed.");
+        if (customer == null) throw new IllegalStateException("Order cannot be confirmed without a customer.");
+        if (staff == null)    throw new IllegalStateException("Order cannot be confirmed without staff.");
+        if (items.isEmpty())  throw new IllegalStateException("Order cannot be confirmed without items.");
         if (!hasEnoughStockForAllItems()) { System.out.println("Order " + orderId + " failed because stock is not enough."); return false; }
         for (OrderItem item : items) item.reduceStock();
         confirmed = true;

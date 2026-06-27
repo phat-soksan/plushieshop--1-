@@ -2,7 +2,10 @@ package model;
 
 import interfaces.Displayable;
 import interfaces.OrderSearchable;
+import interfaces.PlushieFilter;
+import interfaces.Staffaction;
 import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -16,12 +19,12 @@ public class ShopSystem implements Displayable, OrderSearchable {
     private Map<String, Order> orderMap;
 
     public ShopSystem(String shopName) {
-        this.shopName    = (shopName == null || shopName.trim().isEmpty()) ? "Plushie Shop" : shopName.trim();
-        this.plushies    = new ArrayList<>();
-        this.customers   = new ArrayList<>();
+        this.shopName     = (shopName == null || shopName.trim().isEmpty()) ? "Plushie Shop" : shopName.trim();
+        this.plushies     = new ArrayList<>();
+        this.customers    = new ArrayList<>();
         this.staffMembers = new ArrayList<>();
         this.orderHistory = new ArrayList<>();
-        this.orderMap    = new HashMap<>();
+        this.orderMap     = new HashMap<>();
     }
 
     public boolean addPlushie(Plushie plushie)   { if (plushie == null) return false; plushies.add(plushie); return true; }
@@ -65,43 +68,41 @@ public class ShopSystem implements Displayable, OrderSearchable {
         return null;
     }
 
-    public Plushie searchPlushie(String plushieId) { return searchPlushieById(plushieId); }
-
-    public ArrayList<Plushie> searchPlushie(String name, double maxPrice) {
-        ArrayList<Plushie> results = new ArrayList<>();
-        for (Plushie p : plushies)
-            if (p.getName().toLowerCase().contains(name.toLowerCase()) && p.getPrice() <= maxPrice)
-                results.add(p);
+    // PlushieFilter functional interface — replaces the two overloaded searchPlushie() methods
+    public ArrayList<Plushie> searchPlushie(PlushieFilter filter) {
+        ArrayList<Plushie> results = new ArrayList<>(plushies);
+        results.removeIf(p -> !filter.matches(p));
         return results;
     }
 
-    public ArrayList<Plushie> searchPlushie(String name, double minPrice, double maxPrice) {
-        ArrayList<Plushie> results = new ArrayList<>();
-        for (Plushie p : plushies)
-            if (p.getName().toLowerCase().contains(name.toLowerCase()) && p.getPrice() >= minPrice && p.getPrice() <= maxPrice)
-                results.add(p);
-        return results;
-    }
+    public ArrayList<Plushie> getPlushiesCopy()   { return new ArrayList<>(plushies); }
+    public ArrayList<Customer> getCustomersCopy() { return new ArrayList<>(customers); }
+    public ArrayList<Staff> getStaffMembersCopy() { return new ArrayList<>(staffMembers); }
+    public ArrayList<Order> getOrderHistoryCopy() { return new ArrayList<>(orderHistory); }
 
-    public ArrayList<Plushie> getPlushiesCopy()       { return new ArrayList<>(plushies); }
-    public ArrayList<Customer> getCustomersCopy()     { return new ArrayList<>(customers); }
-    public ArrayList<Staff> getStaffMembersCopy()     { return new ArrayList<>(staffMembers); }
-    public ArrayList<Order> getOrderHistoryCopy()     { return new ArrayList<>(orderHistory); }
-
-    public int getOrderHistorySize()  { return orderHistory.size(); }
-    public int getCustomerListSize()  { return customers.size(); }
-    public int getStaffListSize()     { return staffMembers.size(); }
-    public int getPlushieListSize()   { return plushies.size(); }
-
+    // Lambda with parameters: sort by price before displaying
     public void displayAllPlushies() {
+        plushies.sort((a, b) -> Double.compare(a.getPrice(), b.getPrice()));
         System.out.println("\nPlushies in " + shopName + ":");
         for (Plushie p : plushies) p.displayInfo();
     }
 
+    // Anonymous inner class: sort orders by date before displaying
     public void displayAllOrders() {
+        orderHistory.sort(new Comparator<Order>() {
+            @Override
+            public int compare(Order a, Order b) {
+                return a.getOrderDate().compareTo(b.getOrderDate());
+            }
+        });
         System.out.println("\nOrder history in " + shopName + ":");
         if (orderHistory.isEmpty()) { System.out.println("No confirmed orders yet."); return; }
         for (Order o : orderHistory) o.displayInfo();
+    }
+
+    // StaffAction functional interface — apply any action to all staff
+    public void applyToAllStaff(Staffaction action) {
+        for (Staff s : staffMembers) action.perform(s);
     }
 
     @Override
